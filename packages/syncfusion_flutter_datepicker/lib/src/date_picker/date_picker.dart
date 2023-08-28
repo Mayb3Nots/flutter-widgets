@@ -6676,83 +6676,74 @@ class _SfDateRangePickerState extends State<_SfDateRangePicker>
       left: 0,
       width: headerWidth,
       height: widget.headerHeight,
-      child: Column(
-        children: <Widget>[
-          Expanded(
-            child: GestureDetector(
-              child: Container(
-                color: backgroundColor,
-                height: widget.headerHeight,
-                child: _PickerHeaderView(
-                    ValueNotifier<List<dynamic>>(dates),
-                    widget.headerStyle,
-                    widget.selectionMode,
-                    _view,
-                    DateRangePickerHelper.getNumberOfWeeksInView(
-                        widget.monthViewSettings, widget.isHijri),
-                    widget.showNavigationArrow,
-                    widget.navigationDirection,
-                    widget.monthViewSettings.enableSwipeSelection,
-                    widget.navigationMode,
-                    widget.minDate,
-                    widget.maxDate,
-                    widget.monthFormat,
-                    _datePickerTheme,
-                    _locale,
-                    headerWidth,
-                    widget.headerHeight,
-                    widget.allowViewNavigation,
-                    _controller.backward,
-                    _controller.forward,
-                    _isMultiViewEnabled(widget),
-                    widget.viewSpacing,
-                    widget.selectionColor ?? _datePickerTheme.selectionColor!,
-                    _isRtl,
-                    _textScaleFactor,
-                    widget.isHijri,
-                    _localizations,
-                    widget.leftNavigationArrow,
-                    widget.rightNavigationArrow),
-              ),
-              onTapUp: (TapUpDetails details) {
-                if (_view == DateRangePickerView.century || !widget.allowViewNavigation) {
-                  return;
-                }
+      child: GestureDetector(
+        child: Container(
+          color: backgroundColor,
+          height: widget.headerHeight,
+          child: _PickerHeaderView(
+              ValueNotifier<List<dynamic>>(dates),
+              widget.headerStyle,
+              widget.selectionMode,
+              _view,
+              DateRangePickerHelper.getNumberOfWeeksInView(
+                  widget.monthViewSettings, widget.isHijri),
+              widget.showNavigationArrow,
+              widget.navigationDirection,
+              widget.monthViewSettings.enableSwipeSelection,
+              widget.navigationMode,
+              widget.minDate,
+              widget.maxDate,
+              widget.monthFormat,
+              _datePickerTheme,
+              _locale,
+              headerWidth,
+              widget.headerHeight,
+              widget.allowViewNavigation,
+              _controller.backward,
+              _controller.forward,
+              _isMultiViewEnabled(widget),
+              widget.viewSpacing,
+              widget.selectionColor ?? _datePickerTheme.selectionColor!,
+              _isRtl,
+              _textScaleFactor,
+              widget.isHijri,
+              _localizations,
+              widget.leftNavigationArrow,
+              widget.rightNavigationArrow),
+        ),
+        onTapUp: (TapUpDetails details) {
+          if (_view == DateRangePickerView.century || !widget.allowViewNavigation) {
+            return;
+          }
 
-                /// Get the current tapped view date.
-                dynamic currentDate = dates[0];
-                final int numberOfWeeksInView = DateRangePickerHelper.getNumberOfWeeksInView(
-                    widget.monthViewSettings, widget.isHijri);
-                if (_view == DateRangePickerView.month &&
-                    (numberOfWeeksInView == 6 || widget.isHijri)) {
-                  final dynamic date = dates[dates.length ~/ 2];
-                  currentDate =
-                      DateRangePickerHelper.getDate(date.year, date.month, 1, widget.isHijri);
-                }
+          /// Get the current tapped view date.
+          dynamic currentDate = dates[0];
+          final int numberOfWeeksInView = DateRangePickerHelper.getNumberOfWeeksInView(
+              widget.monthViewSettings, widget.isHijri);
+          if (_view == DateRangePickerView.month && (numberOfWeeksInView == 6 || widget.isHijri)) {
+            final dynamic date = dates[dates.length ~/ 2];
+            currentDate = DateRangePickerHelper.getDate(date.year, date.month, 1, widget.isHijri);
+          }
 
-                currentDate = getValidDate(widget.minDate, widget.maxDate, currentDate);
+          currentDate = getValidDate(widget.minDate, widget.maxDate, currentDate);
 
-                /// Check the moved view visible date not contains tapped
-                /// header date
-                /// Eg., If you scroll to place the month view with Dec 2020
-                /// and Jan 2021 then it current visible view date is Dec 2020
-                /// and tap the Jan 2021 then it moved to year view 2020. So
-                /// check the tapped date's (Jan 2021) year is current display
-                /// date year or not. if not then update the display date value.
-                if ((_view == DateRangePickerView.month && _currentDate.year != currentDate.year) ||
-                    (_view == DateRangePickerView.year &&
-                        _currentDate.year ~/ 10 != currentDate.year ~/ 10) ||
-                    (_view == DateRangePickerView.decade &&
-                        _currentDate.year ~/ 100 != currentDate.year ~/ 100)) {
-                  _currentDate = currentDate;
-                  _controller.displayDate = _currentDate;
-                }
-                _updateCalendarTapCallbackForHeader();
-              },
-            ),
-          ),
-          if (widget.widgetBetweenHeaderAndBody != null) widget.widgetBetweenHeaderAndBody!
-        ],
+          /// Check the moved view visible date not contains tapped
+          /// header date
+          /// Eg., If you scroll to place the month view with Dec 2020
+          /// and Jan 2021 then it current visible view date is Dec 2020
+          /// and tap the Jan 2021 then it moved to year view 2020. So
+          /// check the tapped date's (Jan 2021) year is current display
+          /// date year or not. if not then update the display date value.
+          if ((_view == DateRangePickerView.month && _currentDate.year != currentDate.year) ||
+              (_view == DateRangePickerView.year &&
+                  _currentDate.year ~/ 10 != currentDate.year ~/ 10) ||
+              (_view == DateRangePickerView.decade &&
+                  _currentDate.year ~/ 100 != currentDate.year ~/ 100)) {
+            _currentDate = currentDate;
+            _controller.displayDate = _currentDate;
+          }
+          _updateCalendarTapCallbackForHeader();
+        },
       ),
     );
     final Widget pickerView = Positioned(
@@ -6813,44 +6804,52 @@ class _SfDateRangePickerState extends State<_SfDateRangePicker>
         right: 0,
         left: 0,
         height: widget.headerHeight,
-        child: GestureDetector(
-          child: Container(
-            color: widget.headerStyle.backgroundColor ?? _datePickerTheme.headerBackgroundColor,
-            height: widget.headerHeight,
-            child: _PickerHeaderView(
-                _headerVisibleDates,
-                widget.headerStyle,
-                widget.selectionMode,
-                _view,
-                DateRangePickerHelper.getNumberOfWeeksInView(
-                    widget.monthViewSettings, widget.isHijri),
-                widget.showNavigationArrow,
-                widget.navigationDirection,
-                widget.monthViewSettings.enableSwipeSelection,
-                widget.navigationMode,
-                widget.minDate,
-                widget.maxDate,
-                widget.monthFormat,
-                _datePickerTheme,
-                _locale,
-                width,
-                widget.headerHeight,
-                widget.allowViewNavigation,
-                _controller.backward,
-                _controller.forward,
-                _isMultiViewEnabled(widget),
-                widget.viewSpacing,
-                widget.selectionColor ?? _datePickerTheme.selectionColor!,
-                _isRtl,
-                _textScaleFactor,
-                widget.isHijri,
-                _localizations,
-                widget.leftNavigationArrow,
-                widget.rightNavigationArrow),
-          ),
-          onTapUp: (TapUpDetails details) {
-            _updateCalendarTapCallbackForHeader();
-          },
+        child: Column(
+          children: <Widget>[
+            Expanded(
+              child: GestureDetector(
+                child: Container(
+                  color:
+                      widget.headerStyle.backgroundColor ?? _datePickerTheme.headerBackgroundColor,
+                  height: widget.headerHeight,
+                  child: _PickerHeaderView(
+                      _headerVisibleDates,
+                      widget.headerStyle,
+                      widget.selectionMode,
+                      _view,
+                      DateRangePickerHelper.getNumberOfWeeksInView(
+                          widget.monthViewSettings, widget.isHijri),
+                      widget.showNavigationArrow,
+                      widget.navigationDirection,
+                      widget.monthViewSettings.enableSwipeSelection,
+                      widget.navigationMode,
+                      widget.minDate,
+                      widget.maxDate,
+                      widget.monthFormat,
+                      _datePickerTheme,
+                      _locale,
+                      width,
+                      widget.headerHeight,
+                      widget.allowViewNavigation,
+                      _controller.backward,
+                      _controller.forward,
+                      _isMultiViewEnabled(widget),
+                      widget.viewSpacing,
+                      widget.selectionColor ?? _datePickerTheme.selectionColor!,
+                      _isRtl,
+                      _textScaleFactor,
+                      widget.isHijri,
+                      _localizations,
+                      widget.leftNavigationArrow,
+                      widget.rightNavigationArrow),
+                ),
+                onTapUp: (TapUpDetails details) {
+                  _updateCalendarTapCallbackForHeader();
+                },
+              ),
+            ),
+            if (widget.widgetBetweenHeaderAndBody != null) widget.widgetBetweenHeaderAndBody!
+          ],
         ),
       ),
       _getViewHeaderView(widget.headerHeight),
