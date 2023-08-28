@@ -7978,11 +7978,12 @@ class _PickerHeaderViewState extends State<_PickerHeaderView> {
         child: Semantics(
           label: 'Backward',
           child: widget.navigationDirection == DateRangePickerNavigationDirection.horizontal
-              ? Icon(
-                  widget.leftNavigationIcon ?? Icons.keyboard_arrow_up,
-                  color: prevArrowColor,
-                  size: arrowSize,
-                )
+              ? widget.leftNavigationIcon ??
+                  Icon(
+                    Icons.keyboard_arrow_up,
+                    color: prevArrowColor,
+                    size: arrowSize,
+                  )
               : Icon(
                   Icons.keyboard_arrow_up,
                   color: prevArrowColor,
@@ -8016,11 +8017,12 @@ class _PickerHeaderViewState extends State<_PickerHeaderView> {
         child: Semantics(
           label: 'Forward',
           child: widget.navigationDirection == DateRangePickerNavigationDirection.horizontal
-              ? Icon(
-                  widget.rightNavigationIcon ?? Icons.keyboard_arrow_up,
-                  color: nextArrowColor,
-                  size: arrowSize,
-                )
+              ? widget.rightNavigationIcon ??
+                  Icon(
+                    Icons.keyboard_arrow_up,
+                    color: nextArrowColor,
+                    size: arrowSize,
+                  )
               : Icon(
                   Icons.keyboard_arrow_down,
                   color: nextArrowColor,
