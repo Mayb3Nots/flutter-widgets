@@ -2656,6 +2656,7 @@ class SfDateRangePicker extends StatelessWidget {
       leftNavigationArrow: leftNavigationArrow,
       rightNavigationArrow: rightNavigationArrow,
       widgetBetweenHeaderAndBody: widgetBetweenHeaderAndBody,
+      weekStringBuilder: weekStringBuilder,
     );
   }
 
@@ -5338,58 +5339,61 @@ class SfHijriDateRangePicker extends StatelessWidget {
 
 @immutable
 class _SfDateRangePicker extends StatefulWidget {
-  const _SfDateRangePicker(
-      {Key? key,
-      required this.view,
-      required this.selectionMode,
-      this.isHijri = false,
-      required this.headerHeight,
-      this.todayHighlightColor,
-      this.backgroundColor,
-      this.initialSelectedDate,
-      this.initialSelectedDates,
-      this.initialSelectedRange,
-      this.initialSelectedRanges,
-      this.toggleDaySelection = false,
-      this.enablePastDates = true,
-      this.showNavigationArrow = false,
-      required this.selectionShape,
-      required this.navigationDirection,
-      this.controller,
-      this.onViewChanged,
-      this.onSelectionChanged,
-      this.onCancel,
-      this.onSubmit,
-      required this.headerStyle,
-      required this.yearCellStyle,
-      required this.monthViewSettings,
-      required this.initialDisplayDate,
-      this.confirmText = 'OK',
-      this.cancelText = 'CANCEL',
-      this.showActionButtons = false,
-      required this.minDate,
-      required this.maxDate,
-      required this.monthCellStyle,
-      this.allowViewNavigation = true,
-      this.enableMultiView = false,
-      required this.navigationMode,
-      required this.viewSpacing,
-      required this.selectionRadius,
-      this.selectionColor,
-      this.startRangeSelectionColor,
-      this.endRangeSelectionColor,
-      this.rangeSelectionColor,
-      this.selectionTextStyle,
-      this.rangeTextStyle,
-      this.monthFormat,
-      this.cellBuilder,
-      this.showTodayButton = false,
-      this.selectableDayPredicate,
-      this.extendableRangeSelectionDirection = ExtendableRangeSelectionDirection.both,
-      this.leftNavigationArrow,
-      this.rightNavigationArrow,
-      this.widgetBetweenHeaderAndBody})
-      : super(key: key);
+  const _SfDateRangePicker({
+    Key? key,
+    required this.view,
+    required this.selectionMode,
+    this.isHijri = false,
+    required this.headerHeight,
+    this.todayHighlightColor,
+    this.backgroundColor,
+    this.initialSelectedDate,
+    this.initialSelectedDates,
+    this.initialSelectedRange,
+    this.initialSelectedRanges,
+    this.toggleDaySelection = false,
+    this.enablePastDates = true,
+    this.showNavigationArrow = false,
+    required this.selectionShape,
+    required this.navigationDirection,
+    this.controller,
+    this.onViewChanged,
+    this.onSelectionChanged,
+    this.onCancel,
+    this.onSubmit,
+    required this.headerStyle,
+    required this.yearCellStyle,
+    required this.monthViewSettings,
+    required this.initialDisplayDate,
+    this.confirmText = 'OK',
+    this.cancelText = 'CANCEL',
+    this.showActionButtons = false,
+    required this.minDate,
+    required this.maxDate,
+    required this.monthCellStyle,
+    this.allowViewNavigation = true,
+    this.enableMultiView = false,
+    required this.navigationMode,
+    required this.viewSpacing,
+    required this.selectionRadius,
+    this.selectionColor,
+    this.startRangeSelectionColor,
+    this.endRangeSelectionColor,
+    this.rangeSelectionColor,
+    this.selectionTextStyle,
+    this.rangeTextStyle,
+    this.monthFormat,
+    this.cellBuilder,
+    this.showTodayButton = false,
+    this.selectableDayPredicate,
+    this.extendableRangeSelectionDirection = ExtendableRangeSelectionDirection.both,
+    this.leftNavigationArrow,
+    this.rightNavigationArrow,
+    this.widgetBetweenHeaderAndBody,
+    this.weekStringBuilder,
+  }) : super(key: key);
+
+  final String Function(String week)? weekStringBuilder;
 
   final Widget? widgetBetweenHeaderAndBody;
 
@@ -7080,7 +7084,8 @@ class _SfDateRangePickerState extends State<_SfDateRangePicker>
                     widget.navigationDirection,
                     _viewHeaderVisibleDates,
                     widget.monthViewSettings.showWeekNumber,
-                    _isMobilePlatform),
+                    _isMobilePlatform,
+                    widget.weekStringBuilder),
               ),
             ),
           ),
@@ -8186,8 +8191,11 @@ class _PickerViewHeaderPainter extends CustomPainter {
       this.navigationDirection,
       this.viewHeaderVisibleDates,
       this.showWeekNumber,
-      this.isMobilePlatform)
+      this.isMobilePlatform,
+      this.weekStringBuilder)
       : super(repaint: viewHeaderVisibleDates);
+
+  final String Function(String week)? weekStringBuilder;
 
   /// Defines the view header style.
   final DateRangePickerViewHeaderStyle viewHeaderStyle;
@@ -8317,6 +8325,10 @@ class _PickerViewHeaderPainter extends CustomPainter {
           dayTextStyle = viewHeaderDayStyle!.copyWith(color: textColor);
         } else {
           dayTextStyle = viewHeaderDayStyle;
+        }
+
+        if (weekStringBuilder != null) {
+          dayText = weekStringBuilder!.call(dayText);
         }
 
         final TextSpan dayTextSpan = TextSpan(
@@ -9174,6 +9186,7 @@ class _PickerScrollViewState extends State<_PickerScrollView> with TickerProvide
         _updatePickerViewStateDetails(details);
       },
       isRtl: widget.isRtl,
+      weekStringBuilder: widget.picker.weekStringBuilder,
     );
   }
 
@@ -10682,21 +10695,24 @@ class _PickerScrollViewState extends State<_PickerScrollView> with TickerProvide
 class _PickerView extends StatefulWidget {
   /// Constructor to create picker view instance.
   const _PickerView(
-    this.picker,
-    this.controller,
-    this.visibleDates,
-    this.enableMultiView,
-    this.width,
-    this.height,
-    this.datePickerTheme,
-    this.focusNode,
-    this.textScaleFactor,
-    this.disableDatePredicates, {
-    Key? key,
-    required this.getPickerStateDetails,
-    required this.updatePickerStateDetails,
-    this.isRtl = false,
-  }) : super(key: key);
+      this.picker,
+      this.controller,
+      this.visibleDates,
+      this.enableMultiView,
+      this.width,
+      this.height,
+      this.datePickerTheme,
+      this.focusNode,
+      this.textScaleFactor,
+      this.disableDatePredicates,
+      {Key? key,
+      required this.getPickerStateDetails,
+      required this.updatePickerStateDetails,
+      this.isRtl = false,
+      this.weekStringBuilder})
+      : super(key: key);
+
+  final String Function(String week)? weekStringBuilder;
 
   /// Holds the visible dates for the picker view.
   final List<dynamic> visibleDates;
@@ -10963,7 +10979,8 @@ class _PickerViewState extends State<_PickerView> with TickerProviderStateMixin 
                 widget.picker.navigationDirection,
                 null,
                 widget.picker.monthViewSettings.showWeekNumber,
-                _isMobilePlatform),
+                _isMobilePlatform,
+                widget.weekStringBuilder),
           ),
         ),
       ),
