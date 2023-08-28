@@ -240,7 +240,11 @@ class SfDateRangePicker extends StatelessWidget {
       this.cellBuilder,
       this.showTodayButton = false,
       this.selectableDayPredicate,
-      this.extendableRangeSelectionDirection = ExtendableRangeSelectionDirection.both})
+      this.extendableRangeSelectionDirection = ExtendableRangeSelectionDirection.both,
+      this.leftNavigationArrow,
+      this.rightNavigationArrow,
+      this.widgetBetweenHeaderAndBody,
+      this.weekStringBuilder})
       : assert(headerHeight >= -1),
         assert(minDate == null || maxDate == null || minDate.isBefore(maxDate)),
         assert(minDate == null || maxDate == null || maxDate.isAfter(minDate)),
@@ -265,6 +269,11 @@ class SfDateRangePicker extends StatelessWidget {
         maxDate = maxDate ?? DateTime(2100, 12, 31),
         viewSpacing = enableMultiView ? viewSpacing : 0,
         super(key: key);
+
+  final Widget? leftNavigationArrow;
+  final Widget? rightNavigationArrow;
+  final Widget? widgetBetweenHeaderAndBody;
+  final String Function(String week)? weekStringBuilder;
 
   /// Defines the view for the [SfDateRangePicker].
   ///
@@ -2644,6 +2653,8 @@ class SfDateRangePicker extends StatelessWidget {
       showTodayButton: showTodayButton,
       selectableDayPredicate: selectableDayPredicate,
       extendableRangeSelectionDirection: extendableRangeSelectionDirection,
+      leftNavigationArrow: leftNavigationArrow,
+      rightNavigationArrow: rightNavigationArrow,
     );
   }
 
@@ -5373,8 +5384,14 @@ class _SfDateRangePicker extends StatefulWidget {
       this.cellBuilder,
       this.showTodayButton = false,
       this.selectableDayPredicate,
-      this.extendableRangeSelectionDirection = ExtendableRangeSelectionDirection.both})
+      this.extendableRangeSelectionDirection = ExtendableRangeSelectionDirection.both,
+      this.leftNavigationArrow,
+      this.rightNavigationArrow})
       : super(key: key);
+
+  final Widget? leftNavigationArrow;
+
+  final Widget? rightNavigationArrow;
 
   final DateRangePickerView view;
 
@@ -6682,7 +6699,9 @@ class _SfDateRangePickerState extends State<_SfDateRangePicker>
               _isRtl,
               _textScaleFactor,
               widget.isHijri,
-              _localizations),
+              _localizations,
+              widget.leftNavigationArrow,
+              widget.rightNavigationArrow),
         ),
         onTapUp: (TapUpDetails details) {
           if (_view == DateRangePickerView.century || !widget.allowViewNavigation) {
@@ -6808,7 +6827,9 @@ class _SfDateRangePickerState extends State<_SfDateRangePicker>
                 _isRtl,
                 _textScaleFactor,
                 widget.isHijri,
-                _localizations),
+                _localizations,
+                widget.leftNavigationArrow,
+                widget.rightNavigationArrow),
           ),
           onTapUp: (TapUpDetails details) {
             _updateCalendarTapCallbackForHeader();
@@ -7651,8 +7672,14 @@ class _PickerHeaderView extends StatefulWidget {
       this.textScaleFactor,
       this.isHijri,
       this.localizations,
+      this.leftNavigationIcon,
+      this.rightNavigationIcon,
       {Key? key})
       : super(key: key);
+
+  final Widget? leftNavigationIcon;
+
+  final Widget? rightNavigationIcon;
 
   /// Defines the text scale factor of [SfDateRangePicker].
   final double textScaleFactor;
@@ -7932,13 +7959,17 @@ class _PickerHeaderViewState extends State<_PickerHeaderView> {
         hoverElevation: 0,
         child: Semantics(
           label: 'Backward',
-          child: Icon(
-            widget.navigationDirection == DateRangePickerNavigationDirection.horizontal
-                ? Icons.chevron_left
-                : Icons.keyboard_arrow_up,
-            color: prevArrowColor,
-            size: arrowSize,
-          ),
+          child: widget.navigationDirection == DateRangePickerNavigationDirection.horizontal
+              ? Icon(
+                  widget.leftNavigationIcon ?? Icons.keyboard_arrow_up,
+                  color: prevArrowColor,
+                  size: arrowSize,
+                )
+              : Icon(
+                  Icons.keyboard_arrow_up,
+                  color: prevArrowColor,
+                  size: arrowSize,
+                ),
         ),
       ),
     );
@@ -7966,13 +7997,17 @@ class _PickerHeaderViewState extends State<_PickerHeaderView> {
         hoverElevation: 0,
         child: Semantics(
           label: 'Forward',
-          child: Icon(
-            widget.navigationDirection == DateRangePickerNavigationDirection.horizontal
-                ? Icons.chevron_right
-                : Icons.keyboard_arrow_down,
-            color: nextArrowColor,
-            size: arrowSize,
-          ),
+          child: widget.navigationDirection == DateRangePickerNavigationDirection.horizontal
+              ? Icon(
+                  widget.rightNavigationIcon ?? Icons.keyboard_arrow_up,
+                  color: nextArrowColor,
+                  size: arrowSize,
+                )
+              : Icon(
+                  Icons.keyboard_arrow_down,
+                  color: nextArrowColor,
+                  size: arrowSize,
+                ),
         ),
       ),
     );
