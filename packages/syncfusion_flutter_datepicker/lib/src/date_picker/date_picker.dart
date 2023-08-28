@@ -7980,7 +7980,7 @@ class _PickerHeaderViewState extends State<_PickerHeaderView> {
           child: widget.navigationDirection == DateRangePickerNavigationDirection.horizontal
               ? widget.leftNavigationIcon ??
                   Icon(
-                    Icons.keyboard_arrow_up,
+                    Icons.keyboard_arrow_left,
                     color: prevArrowColor,
                     size: arrowSize,
                   )
@@ -8019,7 +8019,7 @@ class _PickerHeaderViewState extends State<_PickerHeaderView> {
           child: widget.navigationDirection == DateRangePickerNavigationDirection.horizontal
               ? widget.rightNavigationIcon ??
                   Icon(
-                    Icons.keyboard_arrow_up,
+                    Icons.keyboard_arrow_right,
                     color: nextArrowColor,
                     size: arrowSize,
                   )
@@ -8317,6 +8317,10 @@ class _PickerViewHeaderPainter extends CustomPainter {
             .toUpperCase();
         dayText = _updateViewHeaderFormat(dayText);
 
+        if (weekStringBuilder != null) {
+          dayText = weekStringBuilder!.call(dayText);
+        }
+
         if (hasToday &&
             currentDate.weekday == today.weekday &&
             (isTodayMonth || isVerticalScroll)) {
@@ -8327,10 +8331,6 @@ class _PickerViewHeaderPainter extends CustomPainter {
           dayTextStyle = viewHeaderDayStyle!.copyWith(color: textColor);
         } else {
           dayTextStyle = viewHeaderDayStyle;
-        }
-
-        if (weekStringBuilder != null) {
-          dayText = weekStringBuilder!.call(dayText);
         }
 
         final TextSpan dayTextSpan = TextSpan(
