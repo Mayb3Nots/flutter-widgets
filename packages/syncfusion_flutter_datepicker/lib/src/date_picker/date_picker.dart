@@ -8316,9 +8316,9 @@ class _PickerViewHeaderPainter extends CustomPainter {
             .toUpperCase();
         dayText = _updateViewHeaderFormat(dayText);
 
-        // if (weekStringBuilder != null) {
-        //   dayText = weekStringBuilder!.call(dayText);
-        // }
+        if (weekStringBuilder != null) {
+          dayText = weekStringBuilder!.call(dayText);
+        }
 
         if (hasToday &&
             currentDate.weekday == today.weekday &&
